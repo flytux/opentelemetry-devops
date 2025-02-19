@@ -1,0 +1,76 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: build-listener
+spec:
+  serviceAccountName: sa-pipeline-trigger
+  triggers:
+    - name: build-trigger
+      interceptors:
+        - name: "CEL filter: only master brancher pushed"
+          ref:
+            name: "cel"
+          params:
+          - name: "filter"
+            value: "body.ref in ['refs/heads/main']"
+      bindings:
+        - ref: build-binding
+      template:
+        ref: build-template
+---
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerBinding
+metadata:
+  name: build-binding
+spec:
+  params:
+    - name: git-revision
+      value: $(body.after)
+    - name: git-repository-url
+      value: $(body.repository.clone_url)
+    - name: git-repo-name
+      value: $(body.repository.name)
+---
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: build-template
+spec:
+  params:
+    - name: git-revision
+      description: The git revision
+    - name: git-repository-url
+      description: The git repository url
+    - name: git-repo-name
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: PipelineRun
+      metadata:
+        generateName: build-trigger-run-
+      spec:
+        serviceAccountName: sa-pipeline-runner
+        pipelineRef:
+          name: build-mvn-jib
+        params:
+          - name: build-stage
+            value: dev
+          - name: git-repo-name
+            value: $(tt.params.git-repo-name)
+          - name: git-branch
+            value: $(tt.params.git-revision)
+          - name: insecure-registry
+            value: "true"
+          - name: git-url
+            value: "http://gitea.gitea:3000/argo"
+          - name: image-url
+            value: "10.214.156.101:30005"
+          - name: gitops-repo-name
+            value: $(tt.params.git-repo-name)-deploy
+          - name: gitops-branch
+            value: "kust"
+        workspaces:
+        - name: source
+          persistentvolumeclaim:
+            claimName: pvc-build
+        - name: gitops
+          emptyDir: {}

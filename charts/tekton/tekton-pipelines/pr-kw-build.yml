@@ -1,0 +1,31 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: dice-build-pipeline-
+spec:
+  serviceAccountName: sa-pipeline-runner
+  pipelineRef:
+    name: build-mvn-jib
+  params:
+  - name: build-stage
+    value: dev
+  - name: git-repo-name
+    value: spring-otel-log
+  - name: git-branch
+    value: main
+  - name: insecure-registry
+    value: "true"
+  - name: git-url
+    value: "http://gitea-http.gitea:3000/argo"
+  - name: image-url
+    value: "docker.local"
+  - name: gitops-repo-name
+    value: spring-otel-log-deploy
+  - name: gitops-branch
+    value: main
+  workspaces:
+  - name: source
+    persistentvolumeclaim:
+      claimName: pvc-build
+  - name: gitops
+    emptyDir: {}

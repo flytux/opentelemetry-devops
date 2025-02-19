@@ -1,0 +1,16 @@
+replicaCount: 1
+
+ingress:
+  enabled: true
+  className: traefik
+  path: /
+  hosts:
+    - docker.local
+  tls:
+    - secretName: docker-registry-tls
+      hosts:
+        - docker.local
+persistence:
+  accessMode: 'ReadWriteOnce'
+  enabled: true
+  size: 10Gi

@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: spring-otel-log
+  namespace: argocd
+spec:
+  destination:
+    namespace: deploy
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    path: dev
+    repoURL: http://gitea-http.gitea:3000/argo/spring-otel-log-deploy
+    targetRevision: main
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true

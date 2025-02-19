@@ -1,0 +1,44 @@
+redis-cluster:
+  enabled: false
+redis:
+  enabled: false
+postgresql:
+  enabled: false
+postgresql-ha:
+  enabled: false
+
+persistence:
+  enabled: true
+
+deployment:
+  env:
+    - name: GITEA__webhook__ALLOWED_HOST_LIST
+      value: '*'
+
+gitea:
+  config:
+    database:
+      DB_TYPE: sqlite3
+    session:
+      PROVIDER: memory
+    cache:
+      ADAPTER: memory
+    queue:
+      TYPE: level
+  admin:
+    username: "gitea_admin"
+    password: "password!@#$"
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: gitea.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []

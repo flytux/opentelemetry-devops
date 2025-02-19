@@ -1,0 +1,46 @@
+deploymentMode: SimpleScalable
+loki:
+  auth_enabled: false
+  useTestSchema: true
+  storage:
+    bucketNames:
+      chunks: chunks
+      ruler: ruler
+      admin: admin
+    type: s3
+    s3:
+      s3ForcePathStyle: true
+      insecure: true
+backend:
+  replicas: 1
+read:
+  replicas: 1
+write:
+  replicas: 3
+chunksCache:
+  enabled: false
+minio:
+  enabled: true
+  rootUser: root-user
+  rootPassword: supersecretpassword
+  users:
+    - accessKey: console
+      secretKey: console123
+      policy: readwrite
+  buckets:
+    - name: chunks
+      policy: none
+      purge: false
+    - name: ruler
+      policy: none
+      purge: false
+    - name: admin
+      policy: none
+      purge: false
+  consoleIngress:
+    enabled: true
+    ingressClassName: traefik
+    path: /
+    hosts:
+      - minio.local
+

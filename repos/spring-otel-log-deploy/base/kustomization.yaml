@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- deploy.yml
+- service.yml
+images:
+- name: docker.vm01/kw-mvn
+  newTag: 20221027-013838-1
+
