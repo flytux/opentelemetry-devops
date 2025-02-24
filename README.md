@@ -58,7 +58,7 @@ ssh node-01.local update-ca-trust # update-ca-certificates (Ubuntu)
             SystemdCgroup = true
       [plugins."io.containerd.grpc.v1.cri".registry]
         [plugins."io.containerd.grpc.v1.cri".registry.mirrors]
-          [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.local"]
+          [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
             endpoint = ["https://docker.local"]
             [plugins."io.containerd.grpc.v1.cri".registry.configs."docker.local".tls]
               ca_file = "/usr/local/share/ca-certificates/docker.crt"
